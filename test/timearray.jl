@@ -8,7 +8,8 @@ facts("field extraction methods work") do
         @fact typeof(timestamp(cl)) --> Array{Date,1}
         @fact typeof(values(cl))    --> Array{Float64,1}
         @fact typeof(colnames(cl))  --> Array{String,1}
-        @fact meta(mdata)           --> "Apple"
+        @fact meta(cl)[:about]      --> "Apple"
+        @fact typeof(retype(cl))    --> Void
     end
 end
 
@@ -22,9 +23,9 @@ facts("type constructors allow views") do
 
     AAPL1 = TimeArray(AAPL.timestamp[source_rows],
                       AAPL.values[source_rows, source_cols],
-                      AAPL.colnames, AAPL.meta)
+                      AAPL.colnames, AAPL.meta, AAPL.retype)
 
-    AAPL2 = TimeArray(tstamps, tvalues, AAPL.colnames, AAPL.meta)
+    AAPL2 = TimeArray(tstamps, tvalues, AAPL.colnames, AAPL.meta, AAPL.retype)
 
     context("match first date") do
         @fact AAPL1[1].timestamp --> AAPL2[1].timestamp
@@ -91,9 +92,11 @@ facts("construction without colnames") do
         @fact no_colnames_multi.colnames --> String["_1", "_2", "_3", "_4", "_5", "_6", "_7", "_8", "_9", "_10", "_11", "_12"]
     end
 
-    context("empty colnames forces meta to nothing") do
-        @fact no_colnames_one.meta   --> nothing
-        @fact no_colnames_multi.meta --> nothing
+    context("empty colnames forces meta to empty, retype to nothing") do
+        @fact length(no_colnames_one.meta) --> 0
+        @fact no_colnames_one.retype --> nothing
+        @fact length(no_colnames_multi.meta) --> 0
+        @fact no_colnames_multi.retype --> nothing
     end
 end
 
@@ -113,14 +116,16 @@ facts("index by integer works with both 1d and 2d time array") do
         @fact cl[1].timestamp --> [Date(2000,1,3)]
         @fact cl[1].values    --> [111.94]
         @fact cl[1].colnames  --> ["Close"]
-        @fact cl[1].meta      --> "AAPL"
+        @fact cl[1].meta[:about] --> "AAPL"
+        @fact cl[1].retype    --> nothing
     end
 
     context("2d time array") do
         @fact ohlc[1].timestamp --> [Date(2000,1,3)]
         @fact ohlc[1].values    --> [104.88 112.5 101.69 111.94]
         @fact ohlc[1].colnames  --> ["Open", "High", "Low","Close"]
-        @fact ohlc[1].meta      --> "AAPL"
+        @fact ohlc[1].meta[:about] --> "AAPL"
+        @fact ohlc[1].retype    --> nothing
     end
 end
 
