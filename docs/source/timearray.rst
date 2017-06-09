@@ -45,7 +45,7 @@ name will be appended by ``_n`` where ``n`` enumerates from 1.
 meta
 ----
 
-The ``meta`` field holds a general purpose dictionary (type ``Dict{Any,Any}``). Use of the ``meta`` dictionary is entirely optional.  Entries may be set programmatically by client software or set directly by the user of an encompassing package/application.  Time series metadata typically describes the_source, the_copyright, the_license, the_descriptor, the_frequency, the_transformation, et cetera.  For such common metadata elements, we suggest using keys that are `Symbols`: `:datasource`, `:copyright`, `:license`, `:analyst`, `:frequency`, `:pretransform`.  Other keys used include: `:project`, `:client`, `date`.  For your own purposes, the keys may be `String`s, `Symbol`s, or any other Julia entity.
+The ``meta`` field holds a general purpose dictionary (type ``Dict{Any,Any}``). Use of the ``meta`` dictionary is entirely optional.  Entries may be set programmatically by client software or set directly by the user of an encompassing package/application.  Time series metadata typically describes the_source, the_copyright, the_license, the_descriptor, the_frequency, the_transformation, et cetera.  For such common metadata elements, we suggest using keys that are `Symbols`: `:datasource`, `:copyright`, `:license`, `:analyst`, `:frequency`, `:pretransform`.  Other keys used include: `:project`, `:client`, `date`.  For your own purposes, the keys may be `String`s, `Symbol`s, or any other Julia-recognized entity.
 
 retype
 ------
