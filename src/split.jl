@@ -43,10 +43,3 @@ function tail{T,N,D}(ta::TimeArray{T,N,D}, n::Int=1)
     new_values    = ta.values[tail_start:end, 1:ncol]
     TimeArray(new_timestamp, new_values, ta.colnames, ta.meta)
 end
-
-###### element wrapers ###########
-
-timestamp{T,N}(ta::TimeArray{T,N}) = ta.timestamp
-values{T,N}(ta::TimeArray{T,N})    = ta.values
-colnames{T,N}(ta::TimeArray{T,N})  = ta.colnames
-meta{T,N}(ta::TimeArray{T,N})      = ta.meta
