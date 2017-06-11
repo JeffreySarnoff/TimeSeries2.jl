@@ -2,7 +2,7 @@ import Base: values, find
 
 # when ############################
 
-when{T,N}(ta::TimeArray{T,N}, period::Function, t::Int)         = ta[find(period(ta.timestamp) .== t)]
+when{T,N}(ta::TimeArray{T,N}, period::Function, t::Int)    = ta[find(period(ta.timestamp) .== t)]
 when{T,N}(ta::TimeArray{T,N}, period::Function, t::String) = ta[find(period(ta.timestamp) .== t)]
 
 # from, to ######################
