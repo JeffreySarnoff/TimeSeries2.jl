@@ -35,6 +35,31 @@ immutable TimeArray{T, N, D<:TimeType, A<:AbstractArray} <: AbstractTimeSeries
     end
 end
 
+
+###### element wrapers ###########
+
+timestamp{T,N}(ta::TimeArray{T,N}) = ta.timestamp
+values{T,N}(ta::TimeArray{T,N})    = ta.values
+colnames{T,N}(ta::TimeArray{T,N})  = ta.colnames
+meta{T,N}(ta::TimeArray{T,N})      = ta.meta
+
+function meta{T,N}(ta::TimeArray{T,N}, key::Any)
+   return !haskey(ta.meta, key) ? nothing : ta.meta[key]    
+end       
+
+function meta{T,N}(ta::TimeArray{T,N}, key_value::Pair{Any,Any})
+   ta.meta[ key_value.first ] = key_value.second
+   return nothing
+end       
+
+function meta{T,N}(ta::TimeArray{T,N}, key::Any, value::Any)
+   ta.meta[ key ] = value
+   return nothing
+end       
+
+
+###### additonal constructors ####
+
 TimeArray{T,N,D<:TimeType,S<:AbstractString}(d::AbstractVector{D}, v::AbstractArray{T,N}, c::Vector{S}, m::MetaInfo) =
         TimeArray{T,N,D,typeof(v)}(d,v,map(String,c),m)
 TimeArray{T,N,D<:TimeType,S<:AbstractString}(d::D, v::AbstractArray{T,N}, c::Vector{S}, m::MetaInfo) =
