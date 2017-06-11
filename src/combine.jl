@@ -1,17 +1,25 @@
 import Base: merge, vcat, map
 
+function merge_meta(m1::MetaInfo, m2::MetaInfo)
+    common_keys   = intersect(keys(m1), keys(m2))
+    if length(common_keys) > 0
+        vals1 = map(x->m1[x], common_keys)
+        vals2 = map(x->m2[x], common_keys)
+        notequal = (vals1 .!= vals2)
+        if any(notequal)
+           throw(ErrorException("metavalues must match on shared metakeys"))
+        end
+    end
+    new_meta = hcat(symdiff(m1, m2), intersect(m1, m2))
+    return new_meta
+end  
+  
 ###### merge ####################
 
 function merge{T,N,M,D}(ta1::TimeArray{T,N,D}, ta2::TimeArray{T,M,D},
-                              method::Symbol=:inner; colnames::Vector=[], meta::Any=Void)
+                              method::Symbol=:inner; colnames::Vector=[], meta::MetaInfo=EmptyMeta)
 
-    if ta1.meta == ta2.meta && meta == Void
-        meta = ta1.meta
-    elseif typeof(ta1.meta) <: AbstractString && typeof(ta2.meta) <: AbstractString && meta == Void
-        meta = string(ta1.meta, "_", ta2.meta)
-    else
-        meta = meta
-    end
+    new_meta = merge(ta1.meta, ta2.meta)
 
     if method == :inner
 
