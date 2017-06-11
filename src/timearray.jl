@@ -2,19 +2,25 @@
 
 import Base: convert, length, show, getindex, start, next, done, isempty, endof
 
-abstract AbstractTimeSeries
+abstract type AbstractTimeSeries end
+
+export AbstractTimeSeries, TimeArray,
+       MetaInfo, EmptyInfo
+
+const MetaInfo  = Dict{Any, Any}
+const EmptyMeta = MetaInfo()
 
 immutable TimeArray{T, N, D<:TimeType, A<:AbstractArray} <: AbstractTimeSeries
 
     timestamp::Vector{D}
     values::A
     colnames::Vector{String}
-    meta::Any
+    meta::MetaInfo
 
     function TimeArray(timestamp::AbstractVector{D},
                        values::AbstractArray{T,N},
                        colnames::Vector{String},
-                       meta::Any)
+                       meta::MetaInfo)
                            nrow, ncol = size(values, 1), size(values, 2)
                            nrow != size(timestamp, 1) ? error("values must match length of timestamp"):
                            ncol != size(colnames,1) ? error("column names must match width of array"):
@@ -29,18 +35,18 @@ immutable TimeArray{T, N, D<:TimeType, A<:AbstractArray} <: AbstractTimeSeries
     end
 end
 
-TimeArray{T,N,D<:TimeType,S<:AbstractString}(d::AbstractVector{D}, v::AbstractArray{T,N}, c::Vector{S}, m::Any) =
+TimeArray{T,N,D<:TimeType,S<:AbstractString}(d::AbstractVector{D}, v::AbstractArray{T,N}, c::Vector{S}, m::MetaInfo) =
         TimeArray{T,N,D,typeof(v)}(d,v,map(String,c),m)
-TimeArray{T,N,D<:TimeType,S<:AbstractString}(d::D, v::AbstractArray{T,N}, c::Vector{S}, m::Any) =
+TimeArray{T,N,D<:TimeType,S<:AbstractString}(d::D, v::AbstractArray{T,N}, c::Vector{S}, m::MetaInfo) =
         TimeArray{T,N,D,typeof(v)}([d],v,map(String,c),m)
 
-# when no column names are provided - meta is forced to nothing
-TimeArray{T,N,D<:TimeType}(d::AbstractVector{D}, v::AbstractArray{T,N}) = TimeArray(d,v,fill("", size(v,2)),nothing)
-TimeArray{T,N,D<:TimeType}(d::D, v::AbstractArray{T,N}) = TimeArray([d],v,fill("", size(v,2)),nothing)
+# when no column names are provided - meta is forced to be empty
+TimeArray{T,N,D<:TimeType}(d::AbstractVector{D}, v::AbstractArray{T,N}) = TimeArray(d,v,fill("", size(v,2)),EmptyMeta)
+TimeArray{T,N,D<:TimeType}(d::D, v::AbstractArray{T,N}) = TimeArray([d],v,fill("", size(v,2)),EmptyMeta)
 
 # when no meta is provided
-TimeArray{T,N,D<:TimeType}(d::AbstractVector{D}, v::AbstractArray{T,N}, c) = TimeArray(d,v,c,nothing)
-TimeArray{T,N,D<:TimeType}(d::D, v::AbstractArray{T,N}, c) = TimeArray([d],v,c,nothing)
+TimeArray{T,N,D<:TimeType}(d::AbstractVector{D}, v::AbstractArray{T,N}, c) = TimeArray(d,v,c,EmptyMeta)
+TimeArray{T,N,D<:TimeType}(d::D, v::AbstractArray{T,N}, c) = TimeArray([d],v,c,EmptyMeta)
 
 
 ###### conversion ###############
